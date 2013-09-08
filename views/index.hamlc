@@ -1,0 +1,5 @@
+%script{src: "http://codeorigin.jquery.com/jquery-2.0.3.min.js"}
+  %audio
+    %source{src: "/audio/1.mp3"}
+  %audio
+    %source{src: "/audio/2.mp3"}
