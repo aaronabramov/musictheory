@@ -24,6 +24,12 @@ module.exports = class Note
     # NOTE: zero octave
     @octave ?= @DEFAULT_OCTAVE
 
+  # @param [Note, String] other note to compare.
+  # @return [Number] Numeric interval representation.
+  interval: (other) ->
+    other = new @constructor(other) unless other instanceof @constructor
+    other.MIDICode() - @MIDICode()
+
   # @return [Number] Midi code of the note.
   MIDICode: ->
     number = (@octave - @ZERO_OCTAVE) * 12 + @INDEXED_NOTE_NAMES[@name]
