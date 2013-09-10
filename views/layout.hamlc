@@ -3,6 +3,7 @@
   %head
     %title= @title
     %link{rel: 'stylesheet', href: '/stylesheets/style.css'}
+    %link{rel: 'stylesheet', href: '//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css'}
     %script{src: "http://codeorigin.jquery.com/jquery-2.0.3.min.js"}
     %script{src: '/javascripts/underscore.js'}
     %script{src: '/javascripts/backbone.js'}
