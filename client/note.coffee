@@ -15,11 +15,7 @@ module.exports = class Note
 
   INDEXED_NOTE_NAMES: {C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11}
 
-  # @param [Number, String] Lowest possible note.
-  # @param [Number, String] Highest possible note.
-  @random: (min, max) ->
-    min = (new @constructor(min)).MIDICode() unless _.isNumber(min)
-    max = (new @constructor(max)).MIDICode() unless _.isNumber(max)
+  DEFAULT_RANDOM_RANGE: [36, 60] # C2, C4
 
 
   # @param [String, Number] note literal "C", "c#9", "c3", "Gb4"
@@ -44,6 +40,17 @@ module.exports = class Note
     number-- if @intonation is "b"
     number
 
+  #--------------------------- Constructor Methods ----------------------------#
+
+  # @param [Number, String] Lowest possible note.
+  # @param [Number, String] Highest possible note.
+  @random: (min, max) ->
+    min ?= this::DEFAULT_RANDOM_RANGE[0]
+    max ?= this::DEFAULT_RANDOM_RANGE[1]
+    min = (new @constructor(min)).MIDICode() unless _.isNumber(min)
+    max = (new @constructor(max)).MIDICode() unless _.isNumber(max)
+    @fromMIDI _.random(min, max)
+
   # @param [Number] MIDI code of the note.
   # @return [Note] parsed instance of Note.
   @fromMIDI: (number) ->
@@ -55,4 +62,4 @@ module.exports = class Note
     else
       intonation = "#"
       [name] = _.find pairs, (p) -> p[1] is ((number % 12) - 1)
-    new this("#{name}#{intonation}#{octave}")
+    new this "#{name}#{intonation}#{octave}"
