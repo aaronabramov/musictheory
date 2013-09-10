@@ -1,3 +1,4 @@
+# Representation of musical note.
 module.exports = class Note
   NOTE_REGEX: ///
     ^
@@ -13,10 +14,13 @@ module.exports = class Note
 
   ZERO_NOTE: "C"
 
+  CENTRAL_NOTE: "A4"
+
+  CENTRAL_PITCH: 440 # Hz
+
   INDEXED_NOTE_NAMES: {C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11}
 
   DEFAULT_RANDOM_RANGE: [36, 60] # C2, C4
-
 
   # @param [String, Number] note literal "C", "c#9", "c3", "Gb4", "A-1"
   constructor: (literal) ->
@@ -39,6 +43,11 @@ module.exports = class Note
     number++ if @intonation is "#"
     number-- if @intonation is "b"
     number
+
+  # @return [Number] Note pitch in Hz. relative to central note.
+  toFreq: ->
+    n = -@interval(@CENTRAL_NOTE)
+    Math.pow(2, n / 12) * @CENTRAL_PITCH
 
   #--------------------------- Constructor Methods ----------------------------#
 
