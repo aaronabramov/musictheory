@@ -15,7 +15,14 @@ module.exports = class Note
 
   INDEXED_NOTE_NAMES: {C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11}
 
-  # @param [String] note literal "C", "c#9", "c3", "Gb4"
+  # @param [Number, String] Lowest possible note.
+  # @param [Number, String] Highest possible note.
+  @random: (min, max) ->
+    min = (new @constructor(min)).MIDICode() unless _.isNumber(min)
+    max = (new @constructor(max)).MIDICode() unless _.isNumber(max)
+
+
+  # @param [String, Number] note literal "C", "c#9", "c3", "Gb4"
   constructor: (literal) ->
     [name, @intonation, octave] = _.rest(literal.match(@NOTE_REGEX))
     name and @name = name.toUpperCase()
@@ -36,3 +43,16 @@ module.exports = class Note
     number++ if @intonation is "#"
     number-- if @intonation is "b"
     number
+
+  # @param [Number] MIDI code of the note.
+  # @return [Note] parsed instance of Note.
+  @fromMIDI: (number) ->
+    octave = Math.floor(number / 12) - 1
+    pairs = _.pairs(this::INDEXED_NOTE_NAMES)
+    [name] = (_.find pairs, (p) -> p[1] is number % 12) or []
+    if name
+      intonation = ""
+    else
+      intonation = "#"
+      [name] = _.find pairs, (p) -> p[1] is ((number % 12) - 1)
+    new this("#{name}#{intonation}#{octave}")
