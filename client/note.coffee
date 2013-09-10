@@ -1,6 +1,4 @@
 module.exports = class Note
-  DEFAULT_OCTAVE: 2
-
   NOTE_REGEX: ///
     ^
     ([a-gA-G]{1})       # Note name
@@ -8,6 +6,8 @@ module.exports = class Note
     (?:([-]?\d+)|(\d*)) # Octave (may be negative)
     $
   ///
+
+  DEFAULT_OCTAVE: 2
 
   ZERO_OCTAVE: -1
 
@@ -18,7 +18,7 @@ module.exports = class Note
   DEFAULT_RANDOM_RANGE: [36, 60] # C2, C4
 
 
-  # @param [String, Number] note literal "C", "c#9", "c3", "Gb4"
+  # @param [String, Number] note literal "C", "c#9", "c3", "Gb4", "A-1"
   constructor: (literal) ->
     [name, @intonation, octave] = _.rest(literal.match(@NOTE_REGEX))
     name and @name = name.toUpperCase()
