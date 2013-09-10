@@ -1,4 +1,5 @@
 Audio = require './audio.coffee'
+window.Note = require './note.coffee'
 
 window.files = []
 $ ->
