@@ -1,9 +1,11 @@
 module.exports = class Audio extends Backbone.View
-  initialize: ({@name}) ->
+  # @param [Note]
+  initialize: ({@note}) ->
+    $('body').append(@render().el)
 
   tagName: 'audio'
 
-  url: -> "/audio/#{@name}.mp3"
+  url: -> encodeURIComponent "/audio/#{@note.toString()}.mp3"
 
   render: ->
     @$el.html "<source src='#{@url()}'></source>"

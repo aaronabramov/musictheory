@@ -60,8 +60,8 @@ module.exports = class Note
   @random: (min, max) ->
     min ?= this::DEFAULT_RANDOM_RANGE[0]
     max ?= this::DEFAULT_RANDOM_RANGE[1]
-    min = (new @constructor(min)).MIDICode() unless _.isNumber(min)
-    max = (new @constructor(max)).MIDICode() unless _.isNumber(max)
+    min = (new Note(min)).MIDICode() unless _.isNumber(min)
+    max = (new Note(max)).MIDICode() unless _.isNumber(max)
     @fromMIDI _.random(min, max)
 
   # @param [Number] MIDI code of the note.
