@@ -49,6 +49,10 @@ module.exports = class Note
     n = -@interval(@CENTRAL_NOTE)
     Math.pow(2, n / 12) * @CENTRAL_PITCH
 
+  # @return [String] Note literal.
+  toString: ->
+    "#{@name}#{@intonation}#{@octave}"
+
   #--------------------------- Constructor Methods ----------------------------#
 
   # @param [Number, String] Lowest possible note.
