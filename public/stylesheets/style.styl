@@ -3,3 +3,33 @@ global-reset()
 
 body
   background-image url('/images/brillant.png')
+
+.container
+  width 330px
+  margin 0 auto
+
+.b-intervals
+  a
+    width 300px
+    background #D7D1F8
+    display inline-block
+    // height 20px
+    margin-top 1px
+    padding 10px 0
+    text-align center
+    cursor pointer
+    color black
+    text-decoration none
+    clear both
+    &:hover
+      text-decoration none
+      background #F0C4F0
+
+  .minor-second, .minor-third, .minor-sixth, .minor-seventh
+    float: left
+    margin-right 1px
+    width 149px
+    clear left
+  .major-second, .major-third, .major-sixth, .major-seventh
+    width 150px
+    clear both

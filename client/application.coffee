@@ -11,6 +11,3 @@ $ ->
    [f1, f2] = files
    f1.play()
    _.delay f2.play, f1.duration()
-
-
-

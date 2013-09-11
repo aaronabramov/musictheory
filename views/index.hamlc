@@ -1,0 +1,15 @@
+.container
+  .b-intervals
+    %a.unison unison
+    %a.minor-second minor second
+    %a.major-second major second
+    %a.minor-third minor third
+    %a.major-third major third
+    %a.fourth fourth
+    %a.fifth fifth
+    %a.tritone tritone
+    %a.minor-sixth minor sixth
+    %a.major-sixth major sixth
+    %a.minor-seventh minor seventh
+    %a.major-seventh major seventh
+    %a.octave octave

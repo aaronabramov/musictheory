@@ -5,3 +5,8 @@ table{border-collapse:separate;border-spacing:0;vertical-align:middle}
 caption,th,td{text-align:left;font-weight:normal;vertical-align:middle}
 a img{border:none}
 body{background-image:url("/images/brillant.png")}
+.container{width:330px;margin:0 auto}
+.b-intervals a{width:300px;background:#d7d1f8;display:inline-block;margin-top:1px;padding:10px 0;text-align:center;cursor:pointer;color:#000;text-decoration:none;clear:both;}
+.b-intervals a:hover{text-decoration:none;background:#f0c4f0}
+.b-intervals .minor-second,.b-intervals .minor-third,.b-intervals .minor-sixth,.b-intervals .minor-seventh{float:left;margin-right:1px;width:149px;clear:left}
+.b-intervals .major-second,.b-intervals .major-third,.b-intervals .major-sixth,.b-intervals .major-seventh{width:150px;clear:both}
