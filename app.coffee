@@ -3,34 +3,15 @@ routes     = require './routes'
 http       = require 'http'
 path       = require 'path'
 partials   = require 'express-partials'
-nib        = require 'nib'
-stylus     = require 'stylus'
 browserify = require 'browserify-middleware'
-coffee     = require 'coffee-script'
-through    = require 'through'
+{cssMiddleware} = require './css'
+browserifyTransform = require './browserify_transform'
 
 app = express()
 
 app.engine('hamlc', require('haml-coffee').__express)
 app.use(partials())
 
-# Compile stylus.
-compile = (str, path) ->
-  stylus(str)
-    .set('filename', path)
-    .set('compress', true)
-    .use(nib())
-
-
-# Coffeescript transform function.
-transform = (file) ->
-    data = ''
-
-    write =  (buf) -> data += buf
-    end = ->
-        @queue(coffee.compile(data))
-        @queue(null)
-    through(write, end)
 
 
 app.configure ->
@@ -45,16 +26,12 @@ app.configure ->
   app.use(express.cookieParser('your secret here'))
   app.use(express.session())
   app.use(app.router)
-  app.use(stylus.middleware
-    src: __dirname + '/public'
-    compile: compile
-  )
+  app.use(cssMiddleware)
   app.use(express.static(path.join(__dirname, 'public')))
 
-browserify.settings
-  transform: [transform]
-
+browserify.settings transform: [browserifyTransform]
 app.get '/application.js', browserify('./client/application.coffee',)
+
 app.configure 'development', ->
   app.use(express.errorHandler())
 
