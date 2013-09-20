@@ -31,5 +31,4 @@ module.exports = class Intervals extends Backbone.View
     else
       $el.addClass 'incorrect'
       @$("a[data-interval=#{interval}]").addClass('correct')
-    console.log interval
-    _.delay @randomInterval, 3000
+    _.delay @randomInterval, 1500

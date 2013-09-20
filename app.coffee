@@ -4,8 +4,8 @@ http       = require 'http'
 path       = require 'path'
 partials   = require 'express-partials'
 browserify = require 'browserify-middleware'
-{cssMiddleware} = require './css'
-browserifyTransform = require './browserify_transform'
+{cssMiddleware} = require './modules/css'
+browserifyTransform = require './modules/browserify_transform'
 
 app = express()
 

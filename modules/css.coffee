@@ -10,5 +10,5 @@ compile = (str, path) ->
 
 
 module.exports.cssMiddleware = stylus.middleware
-  src: __dirname + '/public'
+  src: __dirname + '../public'
   compile: compile

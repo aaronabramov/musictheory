@@ -1,7 +1,7 @@
 coffee = require 'coffee-script'
 through = require 'through'
 
-module.exports.transform = (file) ->
+module.exports = (file) ->
     data = ''
     write =  (buf) -> data += buf
     end = ->
