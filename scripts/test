@@ -1,0 +1,28 @@
+#!/usr/local/share/npm/bin/coffee
+
+fs = require 'fs'
+browserify = require 'browserify'
+hamlc = require 'haml-coffee'
+walk = require 'walk'
+path = require 'path'
+
+REPORTER_TEMPLATE = "#{__dirname}/../test/reporter.hamlc"
+SPEC_DIRECTORY = "#{__dirname}/../test"
+SPEC_REGEX = /.+_spec\.(js|coffee)/
+
+# ----------------------------- Spec Files ----------------------------------#
+specFiles = []
+walker = walk.walk(SPEC_DIRECTORY)
+
+walker.on 'file', (root, file, next) ->
+  filePath = path.normalize "#{root}/#{file.name}"
+  SPEC_REGEX.test(filePath) and specFiles.push(filePath)
+  next()
+
+walker.on 'end', ->
+  console.log specFiles
+
+#----------------------------- Reporter Template ---------------------------#
+
+reporterTemplate = fs.readFileSync(REPORTER_TEMPLATE).toString()
+hamlc.compile(reporterTemplate)()
