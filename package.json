@@ -12,8 +12,10 @@
     "stylus": "*",
     "nib": "*",
     "forever": "*",
+    "browserify": "*",
     "browserify-middleware": "*",
     "coffee-script": "*",
-    "through": "*"
+    "through": "*",
+    "walk": "*"
   }
 }
