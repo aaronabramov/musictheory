@@ -16,8 +16,8 @@ module.exports = class Intervals extends Backbone.View
     @$('a').removeClass('correct incorrect')
     @one?.remove()
     @two?.remove()
-    @one = new Audio(note: Note.random('c2', 'c3'))
-    @two = new Audio(note: Note.random('c2', 'c3'))
+    @one = new Audio(note: Note.random())
+    @two = new Audio(note: Note.random())
     if @one.note.interval(@two.note) < 0
       # Use upwards
       [@one, @two] = [@two, @one]
