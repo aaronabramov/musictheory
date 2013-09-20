@@ -5,8 +5,11 @@ browserify = require 'browserify'
 hamlc = require 'haml-coffee'
 walk = require 'walk'
 path = require 'path'
+browserifyTransform = require '../modules/browserify_transform'
 
 REPORTER_TEMPLATE = "#{__dirname}/../test/reporter.hamlc"
+REPORTER_OUTPUT = "#{__dirname}/../tmp/reporter.html"
+BUNDLE_PATH = "#{__dirname}/../tmp/bundle.js"
 SPEC_DIRECTORY = "#{__dirname}/../test"
 SPEC_REGEX = /.+_spec\.(js|coffee)/
 
@@ -19,10 +22,21 @@ walker.on 'file', (root, file, next) ->
   SPEC_REGEX.test(filePath) and specFiles.push(filePath)
   next()
 
-walker.on 'end', ->
-  console.log specFiles
+walker.on 'end', -> compileCoffeescript(specFiles)
 
-#----------------------------- Reporter Template ---------------------------#
+#---------------------------- Compile Coffeescript ---------------------------#
 
-reporterTemplate = fs.readFileSync(REPORTER_TEMPLATE).toString()
-hamlc.compile(reporterTemplate)()
+compileCoffeescript = (files) ->
+  b = browserify()
+  b.transform browserifyTransform
+  files.forEach (file) -> b.add file
+  output = fs.createWriteStream BUNDLE_PATH
+  b.bundle().pipe output
+  renderReporterTemplate()
+
+#----------------------------- Reporter Template -----------------------------#
+
+renderReporterTemplate = () ->
+  reporterTemplate = fs.readFileSync(REPORTER_TEMPLATE).toString()
+  fs.writeFileSync REPORTER_OUTPUT, hamlc.compile(reporterTemplate)
+    bundlePath: BUNDLE_PATH
