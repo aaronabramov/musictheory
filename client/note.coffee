@@ -24,6 +24,7 @@ module.exports = class Note
 
   # @param [String, Number] note literal "C", "c#9", "c3", "Gb4", "A-1"
   constructor: (literal) ->
+    return Note.fromMIDI(literal) if _.isNumber(literal) and _.isFinite(literal)
     [name, @intonation, octave] = _.rest(literal.match(@NOTE_REGEX))
     name and @name = name.toUpperCase()
     @name or throw new Error "wrong literal format: #{literal}"
