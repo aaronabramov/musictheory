@@ -5,10 +5,14 @@ module.exports = class Intervals extends Backbone.View
   initialize: ->
     @randomInterval()
 
-  events:
-    'click a': 'check'
+  bindEvents: ->
+    $('a').on 'click', @check
+
+  unbindEvents: ->
+    $('a').off()
 
   randomInterval: =>
+    @bindEvents()
     @$('a').removeClass('correct incorrect')
     @one?.remove()
     @two?.remove()
@@ -23,9 +27,9 @@ module.exports = class Intervals extends Backbone.View
     @one.play()
     _.delay @two.play, 1000
 
-  check: (e) ->
+  check: (e) =>
+    @unbindEvents()
     $el = $(e.currentTarget)
-    console.log $el.data('interval'), @one.note.interval(@two.note).toString()
     if $el.data('interval') is interval = @one.note.interval(@two.note)
       $el.addClass 'correct'
     else
