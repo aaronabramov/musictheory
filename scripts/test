@@ -12,6 +12,10 @@ REPORTER_OUTPUT = "#{__dirname}/../tmp/reporter.html"
 BUNDLE_PATH = "#{__dirname}/../tmp/bundle.js"
 SPEC_DIRECTORY = "#{__dirname}/../test"
 SPEC_REGEX = /.+_spec\.(js|coffee)/
+SUPPORT_FILES = [
+  "../test/support/mocha.js",
+  "../test/support/chai.js",
+  "../test/support/sinon.js"]
 
 # ----------------------------- Spec Files ----------------------------------#
 specFiles = []
@@ -40,3 +44,4 @@ renderReporterTemplate = () ->
   reporterTemplate = fs.readFileSync(REPORTER_TEMPLATE).toString()
   fs.writeFileSync REPORTER_OUTPUT, hamlc.compile(reporterTemplate)
     bundlePath: BUNDLE_PATH
+    supportPaths: SUPPORT_FILES

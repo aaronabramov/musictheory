@@ -2,6 +2,6 @@
 %html
   %head
     - @supportPaths?.forEach (path) ->
-      %script{src: @file}
+      %script{src: path}
     %script{src: @bundlePath}
   %body
