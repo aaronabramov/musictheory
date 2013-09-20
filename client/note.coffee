@@ -77,3 +77,12 @@ module.exports = class Note
       intonation = "#"
       [name] = _.find pairs, (p) -> p[1] is ((number % 12) - 1)
     new this "#{name}#{intonation}#{octave}"
+
+  # Convert note literal string to integer midi code.
+  # Bypasses if number passed.
+  #
+  # @param [String, Number] note literal
+  @literalToMidi: (literal) ->
+    return literal if _.isNumber(literal) and _.isFinite(literal)
+    (new this(literal)).MIDICode()
+
