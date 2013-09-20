@@ -20,7 +20,7 @@ module.exports = class Note
 
   INDEXED_NOTE_NAMES: {C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11}
 
-  DEFAULT_RANDOM_RANGE: [36, 60] # C2, C4
+  DEFAULT_RANDOM_RANGE: ["C1", "C4"]
 
   # @param [String, Number] note literal "C", "c#9", "c3", "Gb4", "A-1"
   constructor: (literal) ->
