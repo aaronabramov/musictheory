@@ -11,10 +11,13 @@ browserifyTransform = require '../modules/browserify_transform'
 mkdirp = require 'mkdirp'
 {bundle} = require '../modules/client_bundle.coffee'
 
-REPORTER_TEMPLATE = "#{__dirname}/../test/reporter.hamlc"
-REPORTER_OUTPUT = "#{__dirname}/../tmp/reporter.html"
-BUNDLE_PATH = "#{__dirname}/../tmp/bundle.js"
-SPEC_DIRECTORY = "#{__dirname}/../test"
+ROOT_DIR = path.normalize "#{__dirname}/.."
+REPORTER_TEMPLATE = "#{ROOT_DIR}/test/reporter.hamlc"
+TMP_DIR = "#{ROOT_DIR}/tmp"
+TMP_REPORTER_PATH = "#{TMP_DIR}/reporter.html"
+TMP_BUNDLE_PATH = "#{TMP_DIR}/bundle.js"
+TMP_SPEC_DIR = "#{TMP_DIR}/spec"
+SPEC_DIRECTORY = "#{ROOT_DIR}/test"
 SPEC_REGEX = /.+_spec\.(js|coffee)/
 SUPPORT_FILES = [
   "../public/javascripts/jquery.js",
@@ -36,7 +39,8 @@ specWalker.on 'file', (root, file, next) ->
 #-------------------------------- Spec Bundle -------------------------------#
 specWalker.on 'end', ->
   specFiles = specFiles.map (specFile) ->
-    compiledPath = "#{__dirname}/../tmp/spec/#{path.relative "#{__dirname}/../test", specFile}".replace(/\.coffee$/, ".js")
+    outPath = path.relative(SPEC_DIRECTORY, specFile).replace(/\.coffee$/, ".js")
+    compiledPath = path.join TMP_SPEC_DIR, outPath
     mkdirp.sync path.dirname(compiledPath)
     fs.writeFileSync compiledPath, coffee.compile(fs.readFileSync(specFile).toString())
     path.normalize compiledPath
@@ -46,7 +50,7 @@ specWalker.on 'end', ->
 #---------------------------- Compile Coffeescript ---------------------------#
 compileCoffeescript = ->
   bundle (bundle) ->
-    output = fs.createWriteStream BUNDLE_PATH
+    output = fs.createWriteStream TMP_BUNDLE_PATH
     bundle.pipe(output)
     renderReporterTemplate()
 
@@ -62,8 +66,8 @@ fs.watch "#{__dirname}/../client", (event, filename) ->
 
 renderReporterTemplate = ->
   reporterTemplate = fs.readFileSync(REPORTER_TEMPLATE).toString()
-  fs.writeFileSync REPORTER_OUTPUT, hamlc.compile(reporterTemplate)
+  fs.writeFileSync TMP_REPORTER_PATH, hamlc.compile(reporterTemplate)
     specFiles: specFiles
-    bundlePath: BUNDLE_PATH
+    bundlePath: TMP_BUNDLE_PATH
     supportPaths: SUPPORT_FILES
   process.stdout.write "[32mrendered reporter template\n"
