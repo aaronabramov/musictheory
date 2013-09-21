@@ -1,7 +1,14 @@
 !!!
 %html
   %head
+  %body
     - @supportPaths?.forEach (path) ->
       %script{src: path}
+    :javascript
+      mocha.setup('bdd')
+      should = chai.should()
     %script{src: @bundlePath}
-  %body
+    #mocha
+    :javascript
+      if (window.mochaPhantomJS) { mochaPhantomJS.run(); }
+      else { mocha.run(); }

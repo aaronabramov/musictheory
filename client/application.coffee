@@ -1,10 +1,7 @@
-window.require = require
-Audio = require './audio.coffee'
-window.Interval = require './interval.coffee'
+console.log require
+# window.require = require
 Intervals = require './views/intervals.coffee'
-Note = require './note.coffee'
 
-window.files = []
 $ ->
   window.intervals = new Intervals
     el: $('.b-intervals')

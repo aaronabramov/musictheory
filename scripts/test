@@ -5,6 +5,7 @@ browserify = require 'browserify'
 hamlc = require 'haml-coffee'
 walk = require 'walk'
 path = require 'path'
+_ = require 'underscore'
 browserifyTransform = require '../modules/browserify_transform'
 
 REPORTER_TEMPLATE = "#{__dirname}/../test/reporter.hamlc"
@@ -13,35 +14,59 @@ BUNDLE_PATH = "#{__dirname}/../tmp/bundle.js"
 SPEC_DIRECTORY = "#{__dirname}/../test"
 SPEC_REGEX = /.+_spec\.(js|coffee)/
 SUPPORT_FILES = [
+  "../public/javascripts/jquery.js",
+  "../public/javascripts/underscore.js",
+  "../public/javascripts/backbone.js",
   "../test/support/mocha.js",
   "../test/support/chai.js",
   "../test/support/sinon.js"]
 
 # ----------------------------- Spec Files ----------------------------------#
 specFiles = []
-walker = walk.walk(SPEC_DIRECTORY)
+specWalker = walk.walk(SPEC_DIRECTORY)
 
-walker.on 'file', (root, file, next) ->
+specWalker.on 'file', (root, file, next) ->
   filePath = path.normalize "#{root}/#{file.name}"
   SPEC_REGEX.test(filePath) and specFiles.push(filePath)
   next()
 
-walker.on 'end', -> compileCoffeescript(specFiles)
+specWalker.on 'end', -> compileCoffeescript(specFiles)
+
+#-------------------------------- Client Files -------------------------------#
 
 #---------------------------- Compile Coffeescript ---------------------------#
+
 
 compileCoffeescript = (files) ->
   b = browserify()
   b.transform browserifyTransform
-  files.forEach (file) -> b.add file
-  output = fs.createWriteStream BUNDLE_PATH
-  b.bundle().pipe output
-  renderReporterTemplate()
+  # files.forEach (file) -> b.require file
+
+  coffeeWalker = walk.walk("#{__dirname}/../client")
+  coffeeWalker.on 'file', (root, file, next) ->
+    filePath = path.normalize "#{root}/#{file.name}"
+    expose = path.relative("#{__dirname}/../client", filePath)
+    b.require filePath, {expose}
+    next()
+  coffeeWalker.on 'end', ->
+    output = fs.createWriteStream BUNDLE_PATH
+    b.bundle().pipe output
+    renderReporterTemplate()
+
+# Re-compile maximum once in 300 ms.
+debouncedCompile = _.debounce(compileCoffeescript, 300)
+
+# ---------------------------------- Watch files ------------------------------#
+
+fs.watch "#{__dirname}/../client", (event, filename) ->
+  debouncedCompile()
 
 #----------------------------- Reporter Template -----------------------------#
 
-renderReporterTemplate = () ->
+renderReporterTemplate = ->
   reporterTemplate = fs.readFileSync(REPORTER_TEMPLATE).toString()
   fs.writeFileSync REPORTER_OUTPUT, hamlc.compile(reporterTemplate)
     bundlePath: BUNDLE_PATH
     supportPaths: SUPPORT_FILES
+  process.stdout.write "[32mrendered reporter template\n"
+

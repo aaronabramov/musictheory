@@ -16,6 +16,7 @@
     "browserify-middleware": "*",
     "coffee-script": "*",
     "through": "*",
-    "walk": "*"
+    "walk": "*",
+    "underscore": "1.5.2"
   }
 }
