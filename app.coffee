@@ -5,7 +5,7 @@ path       = require 'path'
 partials   = require 'express-partials'
 browserify = require 'browserify-middleware'
 {cssMiddleware} = require './modules/css'
-browserifyTransform = require './modules/browserify_transform'
+clientBundle = require './modules/client_bundle'
 
 app = express()
 
@@ -29,13 +29,14 @@ app.configure ->
   app.use(cssMiddleware)
   app.use(express.static(path.join(__dirname, 'public')))
 
-browserify.settings transform: [browserifyTransform]
-app.get '/application.js', browserify('./client/application.coffee',)
-
 app.configure 'development', ->
   app.use(express.errorHandler())
 
-app.get('/', routes.index)
+app.get '/bundle.js', (req, res) ->
+  res.setHeader 'content-type', 'text/javascript'
+  clientBundle.bundle (bundle) -> bundle.pipe(res)
+
+app.get '/', routes.index
 
 http.createServer(app).listen app.get('port'), ->
   console.log("Express server listening on port " + app.get('port'))

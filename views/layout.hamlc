@@ -7,6 +7,6 @@
     %script{src: '/javascripts/jquery.js'}
     %script{src: '/javascripts/underscore.js'}
     %script{src: '/javascripts/backbone.js'}
-    %script{src: '/application.js'}
+    %script{src: '/bundle.js'}
   %body
     != @body
