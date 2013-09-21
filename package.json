@@ -17,6 +17,8 @@
     "coffee-script": "*",
     "through": "*",
     "walk": "*",
-    "underscore": "1.5.2"
+    "underscore": "1.5.2",
+    "mkdirp": "*",
+    "mocha-phantomjs": "*"
   }
 }

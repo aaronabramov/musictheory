@@ -6,7 +6,9 @@ hamlc = require 'haml-coffee'
 walk = require 'walk'
 path = require 'path'
 _ = require 'underscore'
+coffee = require 'coffee-script'
 browserifyTransform = require '../modules/browserify_transform'
+mkdirp = require 'mkdirp'
 
 REPORTER_TEMPLATE = "#{__dirname}/../test/reporter.hamlc"
 REPORTER_OUTPUT = "#{__dirname}/../tmp/reporter.html"
@@ -30,14 +32,20 @@ specWalker.on 'file', (root, file, next) ->
   SPEC_REGEX.test(filePath) and specFiles.push(filePath)
   next()
 
-specWalker.on 'end', -> compileCoffeescript(specFiles)
+#-------------------------------- Spec Bundle -------------------------------#
+specWalker.on 'end', ->
+  specFiles = specFiles.map (specFile) ->
+    compiledPath = "#{__dirname}/../tmp/spec/#{path.relative "#{__dirname}/../test", specFile}".replace(/\.coffee$/, ".js")
+    mkdirp.sync path.dirname(compiledPath)
+    fs.writeFileSync compiledPath, coffee.compile(fs.readFileSync(specFile).toString())
+    path.normalize compiledPath
+  # coffee.compile
+  console.log specFiles
+  compileCoffeescript()
 
-#-------------------------------- Client Files -------------------------------#
 
 #---------------------------- Compile Coffeescript ---------------------------#
-
-
-compileCoffeescript = (files) ->
+compileCoffeescript = ->
   b = browserify()
   b.transform browserifyTransform
   # files.forEach (file) -> b.require file
@@ -45,7 +53,7 @@ compileCoffeescript = (files) ->
   coffeeWalker = walk.walk("#{__dirname}/../client")
   coffeeWalker.on 'file', (root, file, next) ->
     filePath = path.normalize "#{root}/#{file.name}"
-    expose = path.relative("#{__dirname}/../client", filePath)
+    expose = path.relative("#{__dirname}/../client", filePath).replace(/\.coffee$/, '')
     b.require filePath, {expose}
     next()
   coffeeWalker.on 'end', ->
@@ -66,7 +74,7 @@ fs.watch "#{__dirname}/../client", (event, filename) ->
 renderReporterTemplate = ->
   reporterTemplate = fs.readFileSync(REPORTER_TEMPLATE).toString()
   fs.writeFileSync REPORTER_OUTPUT, hamlc.compile(reporterTemplate)
+    specFiles: specFiles
     bundlePath: BUNDLE_PATH
     supportPaths: SUPPORT_FILES
   process.stdout.write "[32mrendered reporter template\n"
-

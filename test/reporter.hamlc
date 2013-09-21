@@ -6,9 +6,14 @@
       %script{src: path}
     :javascript
       mocha.setup('bdd')
-      should = chai.should()
+      mocha.reporter('html')
+      var should = chai.should()
     %script{src: @bundlePath}
+    - @specFiles?.forEach (spec) ->
+      %script{src: spec}
     #mocha
     :javascript
-      if (window.mochaPhantomJS) { mochaPhantomJS.run(); }
+      if (window.mochaPhantomJS) {
+        mochaPhantomJS.run();
+      }
       else { mocha.run(); }
