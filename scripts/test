@@ -9,6 +9,7 @@ _ = require 'underscore'
 coffee = require 'coffee-script'
 browserifyTransform = require '../modules/browserify_transform'
 mkdirp = require 'mkdirp'
+{bundle} = require '../modules/client_bundle.coffee'
 
 REPORTER_TEMPLATE = "#{__dirname}/../test/reporter.hamlc"
 REPORTER_OUTPUT = "#{__dirname}/../tmp/reporter.html"
@@ -39,26 +40,14 @@ specWalker.on 'end', ->
     mkdirp.sync path.dirname(compiledPath)
     fs.writeFileSync compiledPath, coffee.compile(fs.readFileSync(specFile).toString())
     path.normalize compiledPath
-  # coffee.compile
-  console.log specFiles
   compileCoffeescript()
 
 
 #---------------------------- Compile Coffeescript ---------------------------#
 compileCoffeescript = ->
-  b = browserify()
-  b.transform browserifyTransform
-  # files.forEach (file) -> b.require file
-
-  coffeeWalker = walk.walk("#{__dirname}/../client")
-  coffeeWalker.on 'file', (root, file, next) ->
-    filePath = path.normalize "#{root}/#{file.name}"
-    expose = path.relative("#{__dirname}/../client", filePath).replace(/\.coffee$/, '')
-    b.require filePath, {expose}
-    next()
-  coffeeWalker.on 'end', ->
+  bundle (bundle) ->
     output = fs.createWriteStream BUNDLE_PATH
-    b.bundle().pipe output
+    bundle.pipe(output)
     renderReporterTemplate()
 
 # Re-compile maximum once in 300 ms.
