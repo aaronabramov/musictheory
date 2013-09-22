@@ -2,6 +2,7 @@
 %html
   %head
   %body
+    %meta{charset: "utf-8"}
     - @supportPaths?.forEach (path) ->
       %script{src: path}
     :javascript
