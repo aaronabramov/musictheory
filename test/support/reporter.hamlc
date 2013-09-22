@@ -7,6 +7,7 @@
     :javascript
       mocha.setup('bdd')
       mocha.reporter('html')
+      var expect = chai.expect
       var should = chai.should()
     %script{src: @bundlePath}
     - @specFiles?.forEach (spec) ->
