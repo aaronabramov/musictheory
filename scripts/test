@@ -1,13 +1,11 @@
 #!/usr/local/share/npm/bin/coffee
 
 fs = require 'fs'
-browserify = require 'browserify'
 hamlc = require 'haml-coffee'
 walk = require 'walk'
 path = require 'path'
 _ = require 'underscore'
 coffee = require 'coffee-script'
-browserifyTransform = require '../modules/browserify_transform'
 mkdirp = require 'mkdirp'
 {bundle} = require '../modules/client_bundle.coffee'
 {exec} = require 'child_process'
