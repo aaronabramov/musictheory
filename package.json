@@ -19,6 +19,7 @@
     "walk": "*",
     "underscore": "1.5.2",
     "mkdirp": "*",
-    "mocha-phantomjs": "*"
+    "mocha-phantomjs": "*",
+    "watch": "0.8.0"
   }
 }

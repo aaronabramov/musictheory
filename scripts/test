@@ -10,14 +10,16 @@ coffee = require 'coffee-script'
 browserifyTransform = require '../modules/browserify_transform'
 mkdirp = require 'mkdirp'
 {bundle} = require '../modules/client_bundle.coffee'
+{exec} = require 'child_process'
+{watchTree} = require 'watch'
 
 ROOT_DIR = path.normalize "#{__dirname}/.."
-REPORTER_TEMPLATE = "#{ROOT_DIR}/test/reporter.hamlc"
+REPORTER_TEMPLATE = "#{ROOT_DIR}/test/support/reporter.hamlc"
 TMP_DIR = "#{ROOT_DIR}/tmp"
 TMP_REPORTER_PATH = "#{TMP_DIR}/reporter.html"
 TMP_BUNDLE_PATH = "#{TMP_DIR}/bundle.js"
 TMP_SPEC_DIR = "#{TMP_DIR}/spec"
-SPEC_DIRECTORY = "#{ROOT_DIR}/test"
+SPEC_DIR = "#{ROOT_DIR}/test"
 SPEC_REGEX = /.+_spec\.(js|coffee)/
 SUPPORT_FILES = [
   "../public/javascripts/jquery.js",
@@ -28,46 +30,60 @@ SUPPORT_FILES = [
   "../test/support/sinon.js"]
 
 # ----------------------------- Spec Files ----------------------------------#
-specFiles = []
-specWalker = walk.walk(SPEC_DIRECTORY)
+compileSpecs = (callback) ->
+  specFiles = []
+  specWalker = walk.walk(SPEC_DIR)
 
-specWalker.on 'file', (root, file, next) ->
-  filePath = path.normalize "#{root}/#{file.name}"
-  SPEC_REGEX.test(filePath) and specFiles.push(filePath)
-  next()
+  specWalker.on 'file', (root, file, next) ->
+    filePath = path.normalize "#{root}/#{file.name}"
+    SPEC_REGEX.test(filePath) and specFiles.push(filePath)
+    next()
 
-#-------------------------------- Spec Bundle -------------------------------#
-specWalker.on 'end', ->
-  specFiles = specFiles.map (specFile) ->
-    outPath = path.relative(SPEC_DIRECTORY, specFile).replace(/\.coffee$/, ".js")
-    compiledPath = path.join TMP_SPEC_DIR, outPath
-    mkdirp.sync path.dirname(compiledPath)
-    fs.writeFileSync compiledPath, coffee.compile(fs.readFileSync(specFile).toString())
-    path.normalize compiledPath
-  compileCoffeescript()
+  specWalker.on 'end', ->
+    specFiles = specFiles.map (specFile) ->
+      # Compile and write js files.
+      outPath = path.relative(SPEC_DIR, specFile).replace(/\.coffee$/, ".js")
+      compiledPath = path.join TMP_SPEC_DIR, outPath
+      mkdirp.sync path.dirname(compiledPath)
+      fs.writeFileSync compiledPath, coffee.compile(fs.readFileSync(specFile).toString())
+      path.normalize compiledPath
+    callback(specFiles)
 
 
 #---------------------------- Compile Coffeescript ---------------------------#
-compileCoffeescript = ->
+compileCoffeescript = (callback) ->
   bundle (bundle) ->
     output = fs.createWriteStream TMP_BUNDLE_PATH
     bundle.pipe(output)
-    renderReporterTemplate()
+    callback()
 
 # Re-compile maximum once in 300 ms.
 debouncedCompile = _.debounce(compileCoffeescript, 300)
 
-# ---------------------------------- Watch files ------------------------------#
-
-fs.watch "#{__dirname}/../client", (event, filename) ->
-  debouncedCompile()
-
 #----------------------------- Reporter Template -----------------------------#
 
-renderReporterTemplate = ->
+renderReporterTemplate = (specFiles, callback) ->
   reporterTemplate = fs.readFileSync(REPORTER_TEMPLATE).toString()
   fs.writeFileSync TMP_REPORTER_PATH, hamlc.compile(reporterTemplate)
     specFiles: specFiles
     bundlePath: TMP_BUNDLE_PATH
     supportPaths: SUPPORT_FILES
-  process.stdout.write "[32mrendered reporter template\n"
+  callback()
+
+#--------------------------------- Runner -------------------------------------#
+runSpecs = ->
+  console.log 'Running specs...'
+  compileSpecs (specFiles) ->
+    compileCoffeescript ->
+      renderReporterTemplate specFiles, ->
+        exec("mocha-phantomjs #{TMP_REPORTER_PATH}").stdout.pipe(process.stdout)
+
+debouncedRun = _.debounce runSpecs, 300
+
+# ---------------------------------- Watch files ------------------------------#
+
+# First run.
+debouncedRun()
+
+for dir in ["#{ROOT_DIR}/client", SPEC_DIR]
+  watchTree dir, -> debouncedRun()
