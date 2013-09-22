@@ -1,5 +1,5 @@
-Note = require '../note.coffee'
-Audio = require '../audio.coffee'
+Note = require 'note'
+Audio = require 'audio'
 
 module.exports = class Intervals extends Backbone.View
   initialize: ->

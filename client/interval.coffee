@@ -1,4 +1,4 @@
-Note = require './note.coffee'
+Note = require 'note'
 
 # Interval class, which contains two notes of arbitrary pitch
 module.exports = class Interval
