@@ -1,3 +1,4 @@
+# WIP
 module.exports = class Audio extends Backbone.View
   # @param [Note]
   initialize: ({@note}) ->
