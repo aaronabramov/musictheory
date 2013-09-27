@@ -8,5 +8,7 @@
     %script{src: '/javascripts/underscore.js'}
     %script{src: '/javascripts/backbone.js'}
     %script{src: '/bundle.js'}
+    :javascript
+      require('application');
   %body
     != @body
