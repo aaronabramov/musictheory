@@ -6,17 +6,30 @@ through = require 'through'
 walk = require 'walk'
 path = require 'path'
 browserify = require 'browserify'
+hamlc = require 'haml-coffee'
 
 BASE_DIR = "#{process.cwd()}/client"
 
 # Transform function to compile coffescript files.
-transform = (file) ->
-    data = ''
-    write =  (buf) -> data += buf
-    end = ->
-      @queue coffee.compile(data)
-      @queue null
-    through(write, end)
+coffeeTransform = (file) ->
+  return through() unless /\.coffee$/.test(file)
+  data = ''
+  write = (buf) -> data += buf
+  end = ->
+    @queue coffee.compile(data)
+    @queue null
+  through(write, end)
+
+# Compile haml coffee templates.
+hamlTransform = (file) ->
+  return through() unless /\.hamlc$/.test(file)
+  data = ''
+  write = (buf) -> data += buf
+  end = ->
+    compiled = "module.exports = " + hamlc.template(data, null, null, placement: 'standalone')
+    @queue compiled
+    @queue null
+  through(write, end)
 
 # Get module expose path form its full path.
 # @example
@@ -39,7 +52,8 @@ getFilePaths = (callback) ->
 # Build bundle and pass it to the callback as an argument.
 module.exports.bundle = (callback) ->
   b = browserify()
-  b.transform transform
+  b.transform coffeeTransform
+  b.transform hamlTransform
   getFilePaths (files) ->
     files.forEach (file) -> b.require file, expose: exposePath(file)
     callback(b.bundle())
