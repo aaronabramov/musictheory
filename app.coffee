@@ -17,7 +17,7 @@ app.configure ->
   app.set('port', process.env.PORT || 3002)
   app.set('views', __dirname + '/views')
   app.set('view engine', 'hamlc')
-  app.set('layout', 'layout')
+  # app.set('layout', 'layout')
   app.use(express.favicon())
   app.use(express.logger('dev'))
   app.use(express.bodyParser())
@@ -32,10 +32,9 @@ app.configure 'development', ->
   app.use(express.errorHandler())
 
 app.get '/bundle.js', (req, res) ->
-  res.setHeader 'content-type', 'text/javascript'
+  res.setHeader 'content-type', 'application/javascript'
   clientBundle.bundle (bundle) -> bundle.pipe(res)
 
-console.log app.settings.env
 app.get '/', require('./routes/index')(app.settings.env)
 
 http.createServer(app).listen app.get('port'), ->

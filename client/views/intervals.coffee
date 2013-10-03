@@ -2,7 +2,9 @@
 Note = require 'note'
 Audio = require 'audio'
 
-module.exports = class Intervals extends Backbone.View
+Intervals = module.exports
+
+class Intervals.View extends Backbone.View
   initialize: ->
     @randomInterval()
 

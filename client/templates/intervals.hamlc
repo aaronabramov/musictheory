@@ -1,1 +1,15 @@
-.intervals
+.container
+  .b-intervals
+    %a.unison{"data-interval": 0}         unison
+    %a.minor-second{"data-interval": 1}   minor second
+    %a.major-second{"data-interval": 2}   major second
+    %a.minor-third{"data-interval": 3}    minor third
+    %a.major-third{"data-interval": 4}    major third
+    %a.fourth{"data-interval": 5}         fourth
+    %a.tritone{"data-interval": 6}        tritone
+    %a.fifth{"data-interval": 7}          fifth
+    %a.minor-sixth{"data-interval": 8}    minor sixth
+    %a.major-sixth{"data-interval": 9}    major sixth
+    %a.minor-seventh{"data-interval": 10} minor seventh
+    %a.major-seventh{"data-interval": 11} major seventh
+    %a.octave{"data-interval": 12}        octave
