@@ -1,20 +1,23 @@
-# WIP
-module.exports = class Audio extends Backbone.View
-  # @param [Note]
-  initialize: ({@note}) ->
-    $('body').append(@render().el)
+Note = require 'note'
 
-  tagName: 'audio'
+module.exports = class Audio
+  AUDIO_CONTAINER_CLASS: _.uniqueId 'audio-elements-container-'
+
+  # @return [$] container element
+  @container: ->
+    container = $(".#{Audio::AUDIO_CONTAINER_CLASS}")
+    return container if container.length
+    $("<div class=#{Audio::AUDIO_CONTAINER_CLASS}>").appendTo($ 'body')
+
+  # @param [Note, String, Number]
+  constructor: ({@note}) ->
+    @note instanceof Note or @note = new Note(@note)
+    Audio.container().append @render()
+
+  render: -> @el = $("<audio><source src=#{@url()}></source></audio>")[0]
 
   url: -> encodeURIComponent "/audio/#{@note.toString()}.mp3"
 
-  render: ->
-    @$el.html "<source src='#{@url()}'></source>"
-    this
+  play: => @el.play()
 
-  play: =>
-    @el.play()
-
-  duration: =>
-    # Delay compensation
-    @el.duration * 1000 - 100
+  duration: => @el.duration * 1000 - 100 # Delay compensation
