@@ -1,2 +1,2 @@
-exports.index = (req, res) ->
-  res.render 'index'
+module.exports = (env) ->
+  (req, res) -> res.render 'index', {env}

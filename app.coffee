@@ -1,5 +1,4 @@
 express    = require 'express'
-routes     = require './routes'
 http       = require 'http'
 path       = require 'path'
 partials   = require 'express-partials'
@@ -36,7 +35,8 @@ app.get '/bundle.js', (req, res) ->
   res.setHeader 'content-type', 'text/javascript'
   clientBundle.bundle (bundle) -> bundle.pipe(res)
 
-app.get '/', routes.index
+console.log app.settings.env
+app.get '/', require('./routes/index')(app.settings.env)
 
 http.createServer(app).listen app.get('port'), ->
   console.log("Express server listening on port " + app.get('port'))

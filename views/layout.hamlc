@@ -9,6 +9,9 @@
     %script{src: '/javascripts/backbone.js'}
     %script{src: '/bundle.js'}
     :javascript
-      require('application');
+      (function() {
+        var MusicTheory = require('musictheory');
+        this.App = new MusicTheory({
+          env: '#{@env}'})})()
   %body
     != @body
