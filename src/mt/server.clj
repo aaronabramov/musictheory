@@ -1,6 +1,7 @@
 (ns mt.server
   (:require [ring.adapter.jetty :as jetty]
             [compojure.core :refer [defroutes routes GET]]
+            [compojure.route :as route]
             [ring.middleware.reload :as reload]
             [mt.js-bundle :refer [js-routes]]))
 
@@ -17,7 +18,8 @@
 (defroutes app-routes
   (-> (routes
         js-routes
-        (GET "/" request (handler request)))
+        (GET "/" request (handler request))
+        (route/resources "/"))
       (reload/wrap-reload)))
 
 (defn start []
