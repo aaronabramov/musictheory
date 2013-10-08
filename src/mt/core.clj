@@ -1,3 +1,5 @@
-(ns mt.core)
+(ns mt.core
+  (:require [mt.server]))
 
-(defn -main [])
+(defn -main []
+  (mt.server/start))
