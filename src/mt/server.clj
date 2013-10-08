@@ -1,7 +1,8 @@
 (ns mt.server
   (:require [ring.adapter.jetty :as jetty]
-            [compojure.core :refer [defroutes GET]]
-            [ring.middleware.reload :as reload]))
+            [compojure.core :refer [defroutes routes GET]]
+            [ring.middleware.reload :as reload]
+            [mt.js-bundle :refer [js-routes]]))
 
 (def port 8080)
 
@@ -14,7 +15,9 @@
 
 
 (defroutes app-routes
-  (-> (GET "/" request (handler request))
+  (-> (routes
+        js-routes
+        (GET "/" request (handler request)))
       (reload/wrap-reload)))
 
 (defn start []
