@@ -1,0 +1,5 @@
+#!/usr/local/share/npm/bin/coffee
+
+{bundle} = require '../modules/client_bundle.coffee'
+bundle (b) -> b.pipe(process.stdout)
+
