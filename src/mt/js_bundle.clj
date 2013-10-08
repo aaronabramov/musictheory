@@ -5,7 +5,7 @@
 (defn compiled-bundle []
   (:out (sh "coffee" (str
          (System/getProperty "user.dir")
-         "/scripts/build_bundle"))))
+         "/modules/client_bundle.coffee"))))
 
 (defroutes js-routes
   (GET "/bundle.js" []
